@@ -1,0 +1,5 @@
+constraints2/
+projects/*
+
+!projects/constraints2.vcxproj
+!projects/constraints2.vcxproj.filters
