@@ -1,5 +1,8 @@
 constraints2/
+constraints2_test/
 projects/*
 
 !projects/constraints2.vcxproj
 !projects/constraints2.vcxproj.filters
+!projects/constraints2_test.vcxproj
+!projects/constraints2_test.vcxproj.filters

@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\geoshape\platform\msvc\projects\geoshape.vcxproj">
+      <Project>{9a710155-9500-4166-a566-9d6e59f68d0a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\sm\platform\msvc\projects\sm.vcxproj">
+      <Project>{81630e0d-e1ef-4837-a0ee-30435ed4fe59}</Project>
+    </ProjectReference>
+    <ProjectReference Include="constraints2.vcxproj">
+      <Project>{2c44b834-49bd-411e-9a74-83465d3cb0bf}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\test\main.cpp" />
+    <ClCompile Include="..\..\..\test\scene_test.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>5.constraints2_test</ProjectName>
+    <ProjectGuid>{BCA725DD-258B-4025-8806-0CD21A58302C}</ProjectGuid>
+    <RootNamespace>constraints2_test</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>15.0.26730.12</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\constraints2_test\x86\Debug\</OutDir>
+    <IntDir>..\constraints2_test\x86\Debug\obj\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\constraints2_test\x86\Release\</OutDir>
+    <IntDir>..\constraints2_test\x86\Release\obj\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\test;..\..\..\..\cu\src;..\..\..\..\sm\src\sm;..\..\..\..\geoshape\include;..\..\..\..\external\rttr\include;..\..\..\..\external\boost\include;..\..\..\..\external\freecad;..\..\..\..\external\eigen\include;..\..\..\..\external\catch\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;__STDC_LIMIT_MACROS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>..\..\..\..\external\boost\lib;..\..\..\..\external\rttr\lib;..\..\..\..\external\fbxsdk\lib;..\..\..\..\external\tbb\lib;..\..\..\..\external\libpng\lib;..\..\..\..\external\libjpeg\lib;..\..\..\..\external\assimp\lib;..\..\..\..\external\lua\lib;..\..\..\..\external\openvdb\lib;..\..\..\..\external\zlib\lib;..\..\..\..\external\OpenEXR\lib;..\..\..\..\external\gl\lib;..\..\..\..\external\glfw\lib;..\..\..\..\external\python27\libs;..\..\..\..\external\geogram\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>rttr_core_d.lib;libfbxsdk.lib;libpng16_static.lib;jpeg.lib;assimp-vc140-mtd.lib;luad.lib;openvdbd.lib;Half-2_3.lib;OpenGL32.lib;glew32sd.lib;glfw3d.lib;python27.lib;geogramd.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\test;..\..\..\..\cu\src;..\..\..\..\sm\src\sm;..\..\..\..\geoshape\include;..\..\..\..\external\rttr\include;..\..\..\..\external\boost\include;..\..\..\..\external\freecad;..\..\..\..\external\eigen\include;..\..\..\..\external\catch\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;__STDC_LIMIT_MACROS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>..\..\..\..\external\boost\lib;..\..\..\..\external\rttr\lib;..\..\..\..\external\fbxsdk\lib;..\..\..\..\external\tbb\lib;..\..\..\..\external\libpng\lib;..\..\..\..\external\libjpeg\lib;..\..\..\..\external\assimp\lib;..\..\..\..\external\lua\lib;..\..\..\..\external\openvdb\lib;..\..\..\..\external\zlib\lib;..\..\..\..\external\OpenEXR\lib;..\..\..\..\external\gl\lib;..\..\..\..\external\glfw\lib;..\..\..\..\external\python27\libs;..\..\..\..\external\geogram\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>rttr_core.lib;libfbxsdk.lib;libpng16_static.lib;jpeg.lib;assimp-vc140-mt.lib;lua.lib;openvdb.lib;Half-2_3.lib;OpenGL32.lib;glew32s.lib;glfw3.lib;python27.lib;geogram.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

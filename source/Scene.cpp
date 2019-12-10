@@ -24,7 +24,8 @@ int Scene::Solve()
 {
     int ret = m_gcs_sys.solve();
 
-    if (ret == GCS::Success) {
+    if (ret == GCS::Success) 
+    {
         m_gcs_sys.applySolution();
         /*valid_solution = */UpdateGeometry();
         //if (!valid_solution) {
@@ -35,6 +36,10 @@ int Scene::Solve()
         //else {
         //    updateNonDrivingConstraints();
         //}
+    }
+    else
+    {
+        int zz = 0;
     }
 
     return ret;
@@ -116,8 +121,7 @@ size_t Scene::AddDistanceConstraint(size_t geo1, PointPos pos1, size_t geo2, Poi
     assert(p1 < m_points.size() && p2 < m_points.size());
 
     int tag = ++m_constraints_counter;
-//    m_gcs_sys.addConstraintP2PDistance(m_points[p1], m_points[p2], value, tag);
-    m_gcs_sys.addConstraintP2PDistance(m_points[0], m_points[1], value, tag);
+    m_gcs_sys.addConstraintP2PDistance(m_points[p1], m_points[p2], value, tag);
 
     ResetSolver();
 
@@ -192,6 +196,13 @@ void Scene::UpdateGeometry()
             dst->SetPos(sm::vec2(
                 static_cast<float>(*src.x), static_cast<float>(*src.y))
             );
+        }
+        else if (type == rttr::type::get<gs::Line2D>())
+        {
+            auto dst = std::static_pointer_cast<gs::Line2D>(geo.shape);
+            auto& src = m_lines[geo.start_pt_idx];
+            dst->SetStart(sm::vec2(static_cast<float>(*src.p1.x), static_cast<float>(*src.p1.y)));
+            dst->SetEnd(sm::vec2(static_cast<float>(*src.p2.x), static_cast<float>(*src.p2.y)));
         }
     }
 }
