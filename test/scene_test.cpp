@@ -15,7 +15,7 @@ TEST_CASE("add point")
 
     id = scene.AddPoint(std::make_shared<gs::Point2D>(sm::vec2(1, 0)));
     REQUIRE(id == 1);
-} 
+}
 
 TEST_CASE("add line")
 {
@@ -70,4 +70,38 @@ TEST_CASE("distance constraint - line")
     dist = 2;
     scene.Solve();
     REQUIRE(sm::dis_pos_to_pos(line->GetStart(), line->GetEnd()) == Approx(dist));
+
+    line->SetStart(sm::vec2(1, 0));
+    line->SetEnd(sm::vec2(1, 5));
+    scene.Solve();
+}
+
+TEST_CASE("horizontal constraint - line")
+{
+    ct2::Scene scene;
+
+    auto line = std::make_shared<gs::Line2D>(sm::vec2(0, 0), sm::vec2(5, 5));
+    auto line_id = scene.AddLine(line);
+    REQUIRE(line_id == 0);
+
+    auto cons = scene.AddHorizontalConstraint(line_id);
+
+    scene.Solve();
+
+    REQUIRE(line->GetEnd() == sm::vec2(5, 0));
+}
+
+TEST_CASE("vertical constraint - line")
+{
+    ct2::Scene scene;
+
+    auto line = std::make_shared<gs::Line2D>(sm::vec2(0, 0), sm::vec2(5, 5));
+    auto line_id = scene.AddLine(line);
+    REQUIRE(line_id == 0);
+
+    auto cons = scene.AddVerticalConstraint(line_id);
+
+    scene.Solve();
+
+    REQUIRE(line->GetEnd() == sm::vec2(0, 5));
 }

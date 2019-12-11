@@ -37,13 +37,16 @@ public:
 
     // derived constraints
     size_t AddVerticalConstraint(size_t geo1, PointPos pos1,
-        size_t geo2, PointPos pos2, double* value);
+        size_t geo2, PointPos pos2);
+    size_t AddVerticalConstraint(size_t line);
     size_t AddHorizontalConstraint(size_t geo1, PointPos pos1,
-        size_t geo2, PointPos pos2, double* value);
+        size_t geo2, PointPos pos2);
+    size_t AddHorizontalConstraint(size_t line);
 
     void ResetSolver();
 
     void Clear();
+    void ClearConstraints();
 
 private:
     struct Geometry
@@ -72,7 +75,8 @@ private:
         size_t end_pt_idx = 0;
     };
 
-    void UpdateGeometry();
+    void BeforeSolve();
+    void AfterSolve();
 
 public:
     GCS::Algorithm defaultSolver;

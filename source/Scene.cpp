@@ -22,24 +22,11 @@ Scene::~Scene()
 
 int Scene::Solve()
 {
+    BeforeSolve();
     int ret = m_gcs_sys.solve();
-
-    if (ret == GCS::Success) 
-    {
+    if (ret == GCS::Success) {
         m_gcs_sys.applySolution();
-        /*valid_solution = */UpdateGeometry();
-        //if (!valid_solution) {
-        //    GCSsys.undoSolution();
-        //    updateGeometry();
-        //    Base::Console().Warning("Invalid solution from %s solver.\n", solvername.c_str());
-        //}
-        //else {
-        //    updateNonDrivingConstraints();
-        //}
-    }
-    else
-    {
-        int zz = 0;
+        AfterSolve();
     }
 
     return ret;
@@ -76,13 +63,7 @@ size_t Scene::AddPoint(const std::shared_ptr<gs::Point2D>& pt)
 size_t Scene::AddLine(const std::shared_ptr<gs::Line2D>& line)
 {
     auto& s = line->GetStart();
-    auto sx = new double(s.x);
-    auto sy = new double(s.y);
-
     auto& e = line->GetEnd();
-    auto ex = new double(e.x);
-    auto ey = new double(e.y);
-
     GCS::Point p1, p2;
 
     m_parameters.push_back(new double(s.x));
@@ -135,7 +116,7 @@ size_t Scene::AddDistanceConstraint(size_t line, double* value)
     return AddDistanceConstraint(line, PointPos::Start, line, PointPos::End, value);
 }
 
-size_t Scene::AddVerticalConstraint(size_t geo1, PointPos pos1, size_t geo2, PointPos pos2, double* value)
+size_t Scene::AddVerticalConstraint(size_t geo1, PointPos pos1, size_t geo2, PointPos pos2)
 {
     assert(geo1 < m_geoms.size() && geo2 < m_geoms.size());
     auto p1 = m_geoms[geo1].GetPointID(pos1);
@@ -150,7 +131,14 @@ size_t Scene::AddVerticalConstraint(size_t geo1, PointPos pos1, size_t geo2, Poi
     return tag;
 }
 
-size_t Scene::AddHorizontalConstraint(size_t geo1, PointPos pos1, size_t geo2, PointPos pos2, double* value)
+size_t Scene::AddVerticalConstraint(size_t line)
+{
+    assert(line < m_geoms.size());
+    assert(m_geoms[line].shape->get_type() == rttr::type::get<gs::Line2D>());
+    return AddVerticalConstraint(line, PointPos::Start, line, PointPos::End);
+}
+
+size_t Scene::AddHorizontalConstraint(size_t geo1, PointPos pos1, size_t geo2, PointPos pos2)
 {
     assert(geo1 < m_geoms.size() && geo2 < m_geoms.size());
     auto p1 = m_geoms[geo1].GetPointID(pos1);
@@ -163,6 +151,13 @@ size_t Scene::AddHorizontalConstraint(size_t geo1, PointPos pos1, size_t geo2, P
     ResetSolver();
 
     return tag;
+}
+
+size_t Scene::AddHorizontalConstraint(size_t line)
+{
+    assert(line < m_geoms.size());
+    assert(m_geoms[line].shape->get_type() == rttr::type::get<gs::Line2D>());
+    return AddHorizontalConstraint(line, PointPos::Start, line, PointPos::End);
 }
 
 void Scene::ResetSolver()
@@ -184,7 +179,31 @@ void Scene::ResetSolver()
     //m_gcs_sys.dofsNumber();
 }
 
-void Scene::UpdateGeometry()
+void Scene::BeforeSolve()
+{
+    for (auto& geo : m_geoms)
+    {
+        auto type = geo.shape->get_type();
+        if (type == rttr::type::get<gs::Point2D>())
+        {
+            auto src = std::static_pointer_cast<gs::Point2D>(geo.shape);
+            auto& dst = m_points[geo.index];
+            *dst.x = static_cast<double>(src->GetPos().x);
+            *dst.y = static_cast<double>(src->GetPos().y);
+        }
+        else if (type == rttr::type::get<gs::Line2D>())
+        {
+            auto src = std::static_pointer_cast<gs::Line2D>(geo.shape);
+            auto& dst = m_lines[geo.index];
+            *dst.p1.x = static_cast<double>(src->GetStart().x);
+            *dst.p1.y = static_cast<double>(src->GetStart().y);
+            *dst.p2.x = static_cast<double>(src->GetEnd().x);
+            *dst.p2.y = static_cast<double>(src->GetEnd().y);
+        }
+    }
+}
+
+void Scene::AfterSolve()
 {
     for (auto& geo : m_geoms)
     {
@@ -192,7 +211,7 @@ void Scene::UpdateGeometry()
         if (type == rttr::type::get<gs::Point2D>())
         {
             auto dst = std::static_pointer_cast<gs::Point2D>(geo.shape);
-            auto& src = m_points[geo.start_pt_idx];
+            auto& src = m_points[geo.index];
             dst->SetPos(sm::vec2(
                 static_cast<float>(*src.x), static_cast<float>(*src.y))
             );
@@ -200,7 +219,7 @@ void Scene::UpdateGeometry()
         else if (type == rttr::type::get<gs::Line2D>())
         {
             auto dst = std::static_pointer_cast<gs::Line2D>(geo.shape);
-            auto& src = m_lines[geo.start_pt_idx];
+            auto& src = m_lines[geo.index];
             dst->SetStart(sm::vec2(static_cast<float>(*src.p1.x), static_cast<float>(*src.p1.y)));
             dst->SetEnd(sm::vec2(static_cast<float>(*src.p2.x), static_cast<float>(*src.p2.y)));
         }
@@ -220,6 +239,14 @@ void Scene::Clear()
     m_constraints_counter = 0;
 
     m_geoms.clear();
+}
+
+void Scene::ClearConstraints()
+{
+    for (int i = 0; i < m_constraints_counter; ++i) {
+        m_gcs_sys.clearByTag(i + 1);
+    }
+    m_constraints_counter = 0;
 }
 
 }
