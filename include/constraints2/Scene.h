@@ -13,6 +13,9 @@ namespace ct2
 
 class SceneData;
 
+using GeoID = int;
+using ConsID = int;
+
 class Scene
 {
 public:
@@ -30,21 +33,21 @@ public:
 
     int Solve();
 
-    size_t AddPoint(const std::shared_ptr<gs::Point2D>& pt);
-    size_t AddLine(const std::shared_ptr<gs::Line2D>& line);
+    GeoID AddPoint(const std::shared_ptr<gs::Point2D>& pt);
+    GeoID AddLine(const std::shared_ptr<gs::Line2D>& line);
 
     // basic constraints
-    size_t AddDistanceConstraint(size_t geo1, PointPos pos1,
-        size_t geo2, PointPos pos2, double* value);
-    size_t AddDistanceConstraint(size_t line, double* value);
+    ConsID AddDistanceConstraint(GeoID geo1, PointPos pos1,
+        GeoID geo2, PointPos pos2, double* value);
+    ConsID AddDistanceConstraint(GeoID line, double* value);
 
     // derived constraints
-    size_t AddVerticalConstraint(size_t geo1, PointPos pos1,
-        size_t geo2, PointPos pos2);
-    size_t AddVerticalConstraint(size_t line);
-    size_t AddHorizontalConstraint(size_t geo1, PointPos pos1,
-        size_t geo2, PointPos pos2);
-    size_t AddHorizontalConstraint(size_t line);
+    ConsID AddVerticalConstraint(GeoID geo1, PointPos pos1,
+        GeoID geo2, PointPos pos2);
+    ConsID AddVerticalConstraint(GeoID line);
+    ConsID AddHorizontalConstraint(GeoID geo1, PointPos pos1,
+        GeoID geo2, PointPos pos2);
+    ConsID AddHorizontalConstraint(GeoID line);
 
     void ResetSolver();
 
@@ -54,7 +57,7 @@ public:
 private:
     struct Geometry
     {
-        size_t GetPointID(PointPos pos) const
+        GeoID GetPointID(PointPos pos) const
         {
             switch (pos)
             {
@@ -66,16 +69,16 @@ private:
                 return mid_pt_idx;
             default:
                 assert(0);
-                return 0;
+                return -1;
             }
         }
 
         std::shared_ptr<gs::Shape2D> shape = nullptr;
         size_t index = 0;
 
-        size_t start_pt_idx = 0;
-        size_t mid_pt_idx = 0;
-        size_t end_pt_idx = 0;
+        GeoID start_pt_idx = -1;
+        GeoID mid_pt_idx = -1;
+        GeoID end_pt_idx = -1;
     };
 
     void BeforeSolve();

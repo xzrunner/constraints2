@@ -45,7 +45,7 @@ int Scene::Solve()
     return ret;
 }
 
-size_t Scene::AddPoint(const std::shared_ptr<gs::Point2D>& pt)
+GeoID Scene::AddPoint(const std::shared_ptr<gs::Point2D>& pt)
 {
     auto& pos = pt->GetPos();
     auto x = new double(pos.x);
@@ -68,12 +68,12 @@ size_t Scene::AddPoint(const std::shared_ptr<gs::Point2D>& pt)
     geo.mid_pt_idx = point_id;
     geo.end_pt_idx = point_id;
 
-    auto geo_id = m_geoms.size();
+    GeoID geo_id = m_geoms.size();
     m_geoms.push_back(geo);
     return geo_id;
 }
 
-size_t Scene::AddLine(const std::shared_ptr<gs::Line2D>& line)
+GeoID Scene::AddLine(const std::shared_ptr<gs::Line2D>& line)
 {
     auto& s = line->GetStart();
     auto& e = line->GetEnd();
@@ -102,12 +102,12 @@ size_t Scene::AddLine(const std::shared_ptr<gs::Line2D>& line)
     geo.index = m_data->lines.size();
     m_data->lines.push_back(l);
 
-    auto geo_id = m_geoms.size();
+    GeoID geo_id = m_geoms.size();
     m_geoms.push_back(geo);
     return geo_id;
 }
 
-size_t Scene::AddDistanceConstraint(size_t geo1, PointPos pos1, size_t geo2, PointPos pos2, double* value)
+ConsID Scene::AddDistanceConstraint(GeoID geo1, PointPos pos1, GeoID geo2, PointPos pos2, double* value)
 {
     assert(geo1 < m_geoms.size() && geo2 < m_geoms.size());
     auto p1 = m_geoms[geo1].GetPointID(pos1);
@@ -122,14 +122,14 @@ size_t Scene::AddDistanceConstraint(size_t geo1, PointPos pos1, size_t geo2, Poi
     return tag;
 }
 
-size_t Scene::AddDistanceConstraint(size_t line, double* value)
+ConsID Scene::AddDistanceConstraint(GeoID line, double* value)
 {
     assert(line < m_geoms.size());
     assert(m_geoms[line].shape->GetType() == gs::ShapeType2D::Line);
     return AddDistanceConstraint(line, PointPos::Start, line, PointPos::End, value);
 }
 
-size_t Scene::AddVerticalConstraint(size_t geo1, PointPos pos1, size_t geo2, PointPos pos2)
+ConsID Scene::AddVerticalConstraint(GeoID geo1, PointPos pos1, GeoID geo2, PointPos pos2)
 {
     assert(geo1 < m_geoms.size() && geo2 < m_geoms.size());
     auto p1 = m_geoms[geo1].GetPointID(pos1);
@@ -144,14 +144,14 @@ size_t Scene::AddVerticalConstraint(size_t geo1, PointPos pos1, size_t geo2, Poi
     return tag;
 }
 
-size_t Scene::AddVerticalConstraint(size_t line)
+ConsID Scene::AddVerticalConstraint(GeoID line)
 {
     assert(line < m_geoms.size());
     assert(m_geoms[line].shape->GetType() == gs::ShapeType2D::Line);
     return AddVerticalConstraint(line, PointPos::Start, line, PointPos::End);
 }
 
-size_t Scene::AddHorizontalConstraint(size_t geo1, PointPos pos1, size_t geo2, PointPos pos2)
+ConsID Scene::AddHorizontalConstraint(GeoID geo1, PointPos pos1, GeoID geo2, PointPos pos2)
 {
     assert(geo1 < m_geoms.size() && geo2 < m_geoms.size());
     auto p1 = m_geoms[geo1].GetPointID(pos1);
@@ -166,7 +166,7 @@ size_t Scene::AddHorizontalConstraint(size_t geo1, PointPos pos1, size_t geo2, P
     return tag;
 }
 
-size_t Scene::AddHorizontalConstraint(size_t line)
+ConsID Scene::AddHorizontalConstraint(GeoID line)
 {
     assert(line < m_geoms.size());
     assert(m_geoms[line].shape->GetType() == gs::ShapeType2D::Line);
