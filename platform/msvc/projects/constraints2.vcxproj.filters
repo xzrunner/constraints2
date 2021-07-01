@@ -1,57 +1,47 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="external">
-      <UniqueIdentifier>{f6fbe4d1-a232-44ab-8e5e-96c66c652b35}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="external\planegcs">
-      <UniqueIdentifier>{dbd2aacf-b25b-4ef3-934e-06d3576c3538}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="dataset">
-      <UniqueIdentifier>{5b779272-7117-40a2-b48d-b32018b54b64}</UniqueIdentifier>
+    <Filter Include="PlaneGCS">
+      <UniqueIdentifier>{d188d887-78b4-4c23-86ef-1506b7c4e832}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\source\Scene.cpp">
-      <Filter>dataset</Filter>
+    <ClCompile Include="..\..\..\external\PlaneGCS\Constraints.cpp">
+      <Filter>PlaneGCS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\external\freecad\planegcs\Constraints.cpp">
-      <Filter>external\planegcs</Filter>
+    <ClCompile Include="..\..\..\external\PlaneGCS\GCS.cpp">
+      <Filter>PlaneGCS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\external\freecad\planegcs\GCS.cpp">
-      <Filter>external\planegcs</Filter>
+    <ClCompile Include="..\..\..\external\PlaneGCS\Geo.cpp">
+      <Filter>PlaneGCS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\external\freecad\planegcs\Geo.cpp">
-      <Filter>external\planegcs</Filter>
+    <ClCompile Include="..\..\..\external\PlaneGCS\qp_eq.cpp">
+      <Filter>PlaneGCS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\external\freecad\planegcs\qp_eq.cpp">
-      <Filter>external\planegcs</Filter>
+    <ClCompile Include="..\..\..\external\PlaneGCS\SubSystem.cpp">
+      <Filter>PlaneGCS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\external\freecad\planegcs\SubSystem.cpp">
-      <Filter>external\planegcs</Filter>
-    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\include\constraints2\Scene.h">
-      <Filter>dataset</Filter>
+    <ClInclude Include="..\..\..\external\PlaneGCS\Constraints.h">
+      <Filter>PlaneGCS</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\external\freecad\planegcs\Constraints.h">
-      <Filter>external\planegcs</Filter>
+    <ClInclude Include="..\..\..\external\PlaneGCS\GCS.h">
+      <Filter>PlaneGCS</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\external\freecad\planegcs\GCS.h">
-      <Filter>external\planegcs</Filter>
+    <ClInclude Include="..\..\..\external\PlaneGCS\Geo.h">
+      <Filter>PlaneGCS</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\external\freecad\planegcs\Geo.h">
-      <Filter>external\planegcs</Filter>
+    <ClInclude Include="..\..\..\external\PlaneGCS\qp_eq.h">
+      <Filter>PlaneGCS</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\external\freecad\planegcs\qp_eq.h">
-      <Filter>external\planegcs</Filter>
+    <ClInclude Include="..\..\..\external\PlaneGCS\SubSystem.h">
+      <Filter>PlaneGCS</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\external\freecad\planegcs\SubSystem.h">
-      <Filter>external\planegcs</Filter>
+    <ClInclude Include="..\..\..\external\PlaneGCS\Util.h">
+      <Filter>PlaneGCS</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\external\freecad\planegcs\Util.h">
-      <Filter>external\planegcs</Filter>
-    </ClInclude>
+    <ClInclude Include="..\..\..\include\constraints2\Scene.h" />
   </ItemGroup>
 </Project>

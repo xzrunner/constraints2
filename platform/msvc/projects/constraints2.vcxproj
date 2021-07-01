@@ -9,42 +9,58 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\external\freecad\planegcs\Constraints.cpp" />
-    <ClCompile Include="..\..\..\..\external\freecad\planegcs\GCS.cpp" />
-    <ClCompile Include="..\..\..\..\external\freecad\planegcs\Geo.cpp" />
-    <ClCompile Include="..\..\..\..\external\freecad\planegcs\qp_eq.cpp" />
-    <ClCompile Include="..\..\..\..\external\freecad\planegcs\SubSystem.cpp" />
+    <ClCompile Include="..\..\..\external\PlaneGCS\Constraints.cpp" />
+    <ClCompile Include="..\..\..\external\PlaneGCS\GCS.cpp" />
+    <ClCompile Include="..\..\..\external\PlaneGCS\Geo.cpp" />
+    <ClCompile Include="..\..\..\external\PlaneGCS\qp_eq.cpp" />
+    <ClCompile Include="..\..\..\external\PlaneGCS\SubSystem.cpp" />
     <ClCompile Include="..\..\..\source\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\external\freecad\planegcs\Constraints.h" />
-    <ClInclude Include="..\..\..\..\external\freecad\planegcs\GCS.h" />
-    <ClInclude Include="..\..\..\..\external\freecad\planegcs\Geo.h" />
-    <ClInclude Include="..\..\..\..\external\freecad\planegcs\qp_eq.h" />
-    <ClInclude Include="..\..\..\..\external\freecad\planegcs\SubSystem.h" />
-    <ClInclude Include="..\..\..\..\external\freecad\planegcs\Util.h" />
+    <ClInclude Include="..\..\..\external\PlaneGCS\Constraints.h" />
+    <ClInclude Include="..\..\..\external\PlaneGCS\GCS.h" />
+    <ClInclude Include="..\..\..\external\PlaneGCS\Geo.h" />
+    <ClInclude Include="..\..\..\external\PlaneGCS\qp_eq.h" />
+    <ClInclude Include="..\..\..\external\PlaneGCS\SubSystem.h" />
+    <ClInclude Include="..\..\..\external\PlaneGCS\Util.h" />
     <ClInclude Include="..\..\..\include\constraints2\Scene.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>5.constraints2</ProjectName>
-    <ProjectGuid>{2C44B834-49BD-411E-9A74-83465D3CB0BF}</ProjectGuid>
+    <ProjectName>constraints2</ProjectName>
+    <ProjectGuid>{20626774-7F09-4761-986E-D18D4668968D}</ProjectGuid>
     <RootNamespace>constraints2</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformToolset>v142</PlatformToolset>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PlatformToolset>v142</PlatformToolset>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -70,8 +86,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\..\cu\src;..\..\..\..\sm\src\sm;..\..\..\..\guard\include;..\..\..\..\cpputil\include;..\..\..\..\geoshape\include;..\..\..\..\external\rttr\include;..\..\..\..\external\rapidjson\include;..\..\..\..\external\boost\include;..\..\..\..\external\eigen\include;..\..\..\..\external\freecad\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../include;../../../../glslang;../../../../SPIRV-Cross;../../../../DirectXShaderCompiler/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;__STDC_LIMIT_MACROS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -84,13 +100,28 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\..\cu\src;..\..\..\..\sm\src\sm;..\..\..\..\guard\include;..\..\..\..\cpputil\include;..\..\..\..\geoshape\include;..\..\..\..\external\rttr\include;..\..\..\..\external\rapidjson\include;..\..\..\..\external\boost\include;..\..\..\..\external\eigen\include;..\..\..\..\external\freecad\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../include;../../../../glslang;../../../../SPIRV-Cross;../../../../DirectXShaderCompiler/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;__STDC_LIMIT_MACROS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\external;..\..\..\..\eigen;..\..\..\..\boost;..\..\..\..\geoshape\include;..\..\..\..\sm</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <Optimization>Disabled</Optimization>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <PreprocessorDefinitions>_DEBUG;NO_RTTR</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\external;..\..\..\..\eigen;..\..\..\..\boost;..\..\..\..\geoshape\include;..\..\..\..\sm</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;NO_RTTR</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
