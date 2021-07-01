@@ -1,14 +1,17 @@
 #pragma once
 
-#include <planegcs/GCS.h>
-
 #include <vector>
 #include <memory>
 
+#include <assert.h>
+
+namespace GCS { class System; }
 namespace gs { class Shape2D; class Point2D; class Line2D; }
 
 namespace ct2
 {
+
+class SceneData;
 
 class Scene
 {
@@ -78,17 +81,12 @@ private:
     void BeforeSolve();
     void AfterSolve();
 
-public:
-    GCS::Algorithm defaultSolver;
-    GCS::Algorithm defaultSolverRedundant;
-
 private:
     // solving parameters
     std::vector<double*> m_parameters;
-    std::vector<GCS::Point> m_points;
-    std::vector<GCS::Line>  m_lines;
+    std::shared_ptr<SceneData> m_data = nullptr;
 
-    GCS::System m_gcs_sys;
+    std::shared_ptr<GCS::System> m_gcs_sys = nullptr;
     int m_constraints_counter = 0;
 
     std::vector<Geometry> m_geoms;

@@ -3,13 +3,26 @@
 #include <geoshape/Point2D.h>
 #include <geoshape/Line2D.h>
 
+#include <PlaneGCS/GCS.h>
+
 namespace ct2
 {
 
-Scene::Scene()
-    : defaultSolver(GCS::DogLeg)
-    , defaultSolverRedundant(GCS::DogLeg)
+struct SceneData
 {
+    GCS::Algorithm defaultSolver = GCS::DogLeg;
+    GCS::Algorithm defaultSolverRedundant = GCS::DogLeg;
+
+    std::vector<GCS::Point> points;
+    std::vector<GCS::Line>  lines;
+};
+
+Scene::Scene()
+{
+    m_data = std::make_shared<SceneData>();
+
+    m_gcs_sys = std::make_shared<GCS::System>();
+
     ResetSolver();
 }
 
@@ -23,9 +36,9 @@ Scene::~Scene()
 int Scene::Solve()
 {
     BeforeSolve();
-    int ret = m_gcs_sys.solve();
+    int ret = m_gcs_sys->solve();
     if (ret == GCS::Success) {
-        m_gcs_sys.applySolution();
+        m_gcs_sys->applySolution();
         AfterSolve();
     }
 
@@ -45,8 +58,8 @@ size_t Scene::AddPoint(const std::shared_ptr<gs::Point2D>& pt)
     m_parameters.push_back(x);
     m_parameters.push_back(y);
 
-    auto point_id = m_points.size();
-    m_points.push_back(dst);
+    auto point_id = m_data->points.size();
+    m_data->points.push_back(dst);
 
     Geometry geo;
     geo.shape = pt;
@@ -78,16 +91,16 @@ size_t Scene::AddLine(const std::shared_ptr<gs::Line2D>& line)
 
     Geometry geo;
     geo.shape = line;
-    geo.start_pt_idx = m_points.size();
-    geo.end_pt_idx   = m_points.size() + 1;
-    m_points.push_back(p1);
-    m_points.push_back(p2);
+    geo.start_pt_idx = m_data->points.size();
+    geo.end_pt_idx   = m_data->points.size() + 1;
+    m_data->points.push_back(p1);
+    m_data->points.push_back(p2);
 
     GCS::Line l;
     l.p1 = p1;
     l.p2 = p2;
-    geo.index = m_lines.size();
-    m_lines.push_back(l);
+    geo.index = m_data->lines.size();
+    m_data->lines.push_back(l);
 
     auto geo_id = m_geoms.size();
     m_geoms.push_back(geo);
@@ -99,10 +112,10 @@ size_t Scene::AddDistanceConstraint(size_t geo1, PointPos pos1, size_t geo2, Poi
     assert(geo1 < m_geoms.size() && geo2 < m_geoms.size());
     auto p1 = m_geoms[geo1].GetPointID(pos1);
     auto p2 = m_geoms[geo2].GetPointID(pos2);
-    assert(p1 < m_points.size() && p2 < m_points.size());
+    assert(p1 < m_data->points.size() && p2 < m_data->points.size());
 
     int tag = ++m_constraints_counter;
-    m_gcs_sys.addConstraintP2PDistance(m_points[p1], m_points[p2], value, tag);
+    m_gcs_sys->addConstraintP2PDistance(m_data->points[p1], m_data->points[p2], value, tag);
 
     ResetSolver();
 
@@ -112,7 +125,7 @@ size_t Scene::AddDistanceConstraint(size_t geo1, PointPos pos1, size_t geo2, Poi
 size_t Scene::AddDistanceConstraint(size_t line, double* value)
 {
     assert(line < m_geoms.size());
-    assert(m_geoms[line].shape->get_type() == rttr::type::get<gs::Line2D>());
+    assert(m_geoms[line].shape->GetType() == gs::ShapeType2D::Line);
     return AddDistanceConstraint(line, PointPos::Start, line, PointPos::End, value);
 }
 
@@ -121,10 +134,10 @@ size_t Scene::AddVerticalConstraint(size_t geo1, PointPos pos1, size_t geo2, Poi
     assert(geo1 < m_geoms.size() && geo2 < m_geoms.size());
     auto p1 = m_geoms[geo1].GetPointID(pos1);
     auto p2 = m_geoms[geo2].GetPointID(pos2);
-    assert(p1 < m_points.size() && p2 < m_points.size());
+    assert(p1 < m_data->points.size() && p2 < m_data->points.size());
 
     int tag = ++m_constraints_counter;
-    m_gcs_sys.addConstraintVertical(m_points[p1], m_points[p2], tag);
+    m_gcs_sys->addConstraintVertical(m_data->points[p1], m_data->points[p2], tag);
 
     ResetSolver();
 
@@ -134,7 +147,7 @@ size_t Scene::AddVerticalConstraint(size_t geo1, PointPos pos1, size_t geo2, Poi
 size_t Scene::AddVerticalConstraint(size_t line)
 {
     assert(line < m_geoms.size());
-    assert(m_geoms[line].shape->get_type() == rttr::type::get<gs::Line2D>());
+    assert(m_geoms[line].shape->GetType() == gs::ShapeType2D::Line);
     return AddVerticalConstraint(line, PointPos::Start, line, PointPos::End);
 }
 
@@ -143,10 +156,10 @@ size_t Scene::AddHorizontalConstraint(size_t geo1, PointPos pos1, size_t geo2, P
     assert(geo1 < m_geoms.size() && geo2 < m_geoms.size());
     auto p1 = m_geoms[geo1].GetPointID(pos1);
     auto p2 = m_geoms[geo2].GetPointID(pos2);
-    assert(p1 < m_points.size() && p2 < m_points.size());
+    assert(p1 < m_data->points.size() && p2 < m_data->points.size());
 
     int tag = ++m_constraints_counter;
-    m_gcs_sys.addConstraintHorizontal(m_points[p1], m_points[p2], tag);
+    m_gcs_sys->addConstraintHorizontal(m_data->points[p1], m_data->points[p2], tag);
 
     ResetSolver();
 
@@ -156,45 +169,45 @@ size_t Scene::AddHorizontalConstraint(size_t geo1, PointPos pos1, size_t geo2, P
 size_t Scene::AddHorizontalConstraint(size_t line)
 {
     assert(line < m_geoms.size());
-    assert(m_geoms[line].shape->get_type() == rttr::type::get<gs::Line2D>());
+    assert(m_geoms[line].shape->GetType() == gs::ShapeType2D::Line);
     return AddHorizontalConstraint(line, PointPos::Start, line, PointPos::End);
 }
 
 void Scene::ResetSolver()
 {
-    //m_gcs_sys.initSolution(GCS::Algorithm(GCS::DogLeg));
+    //m_gcs_sys->initSolution(GCS::Algorithm(GCS::DogLeg));
     /////////////////////
 
 
-    //m_gcs_sys.clearByTag(-1);
-    m_gcs_sys.declareUnknowns(m_parameters);
-    //m_gcs_sys.declareDrivenParams(DrivenParameters);
-    m_gcs_sys.initSolution(defaultSolverRedundant);
-    //m_gcs_sys.getConflicting(Conflicting);
-    //m_gcs_sys.getRedundant(Redundant);
-    //m_gcs_sys.getDependentParams(pconstraintplistOut);
+    //m_gcs_sys->clearByTag(-1);
+    m_gcs_sys->declareUnknowns(m_parameters);
+    //m_gcs_sys->declareDrivenParams(DrivenParameters);
+    m_gcs_sys->initSolution(m_data->defaultSolverRedundant);
+    //m_gcs_sys->getConflicting(Conflicting);
+    //m_gcs_sys->getRedundant(Redundant);
+    //m_gcs_sys->getDependentParams(pconstraintplistOut);
 
     //calculateDependentParametersElements();
 
-    //m_gcs_sys.dofsNumber();
+    //m_gcs_sys->dofsNumber();
 }
 
 void Scene::BeforeSolve()
 {
     for (auto& geo : m_geoms)
     {
-        auto type = geo.shape->get_type();
-        if (type == rttr::type::get<gs::Point2D>())
+        auto type = geo.shape->GetType();
+        if (type == gs::ShapeType2D::Point)
         {
             auto src = std::static_pointer_cast<gs::Point2D>(geo.shape);
-            auto& dst = m_points[geo.index];
+            auto& dst = m_data->points[geo.index];
             *dst.x = static_cast<double>(src->GetPos().x);
             *dst.y = static_cast<double>(src->GetPos().y);
         }
-        else if (type == rttr::type::get<gs::Line2D>())
+        else if (type == gs::ShapeType2D::Line)
         {
             auto src = std::static_pointer_cast<gs::Line2D>(geo.shape);
-            auto& dst = m_lines[geo.index];
+            auto& dst = m_data->lines[geo.index];
             *dst.p1.x = static_cast<double>(src->GetStart().x);
             *dst.p1.y = static_cast<double>(src->GetStart().y);
             *dst.p2.x = static_cast<double>(src->GetEnd().x);
@@ -207,19 +220,19 @@ void Scene::AfterSolve()
 {
     for (auto& geo : m_geoms)
     {
-        auto type = geo.shape->get_type();
-        if (type == rttr::type::get<gs::Point2D>())
+        auto type = geo.shape->GetType();
+        if (type == gs::ShapeType2D::Point)
         {
             auto dst = std::static_pointer_cast<gs::Point2D>(geo.shape);
-            auto& src = m_points[geo.index];
+            auto& src = m_data->points[geo.index];
             dst->SetPos(sm::vec2(
                 static_cast<float>(*src.x), static_cast<float>(*src.y))
             );
         }
-        else if (type == rttr::type::get<gs::Line2D>())
+        else if (type == gs::ShapeType2D::Line)
         {
             auto dst = std::static_pointer_cast<gs::Line2D>(geo.shape);
-            auto& src = m_lines[geo.index];
+            auto& src = m_data->lines[geo.index];
             dst->SetStart(sm::vec2(static_cast<float>(*src.p1.x), static_cast<float>(*src.p1.y)));
             dst->SetEnd(sm::vec2(static_cast<float>(*src.p2.x), static_cast<float>(*src.p2.y)));
         }
@@ -233,8 +246,8 @@ void Scene::Clear()
     }
     m_parameters.clear();
 
-    m_points.clear();
-    m_lines.clear();
+    m_data->points.clear();
+    m_data->lines.clear();
 
     m_constraints_counter = 0;
 
@@ -244,7 +257,7 @@ void Scene::Clear()
 void Scene::ClearConstraints()
 {
     for (int i = 0; i < m_constraints_counter; ++i) {
-        m_gcs_sys.clearByTag(i + 1);
+        m_gcs_sys->clearByTag(i + 1);
     }
     m_constraints_counter = 0;
 }
