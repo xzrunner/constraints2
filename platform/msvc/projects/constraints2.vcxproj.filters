@@ -43,5 +43,7 @@
       <Filter>PlaneGCS</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\constraints2\Scene.h" />
+    <ClInclude Include="..\..\..\include\constraints2\Constraint.h" />
+    <ClInclude Include="..\..\..\include\constraints2\typedef.h" />
   </ItemGroup>
 </Project>

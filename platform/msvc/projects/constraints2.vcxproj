@@ -33,7 +33,9 @@
     <ClInclude Include="..\..\..\external\PlaneGCS\qp_eq.h" />
     <ClInclude Include="..\..\..\external\PlaneGCS\SubSystem.h" />
     <ClInclude Include="..\..\..\external\PlaneGCS\Util.h" />
+    <ClInclude Include="..\..\..\include\constraints2\Constraint.h" />
     <ClInclude Include="..\..\..\include\constraints2\Scene.h" />
+    <ClInclude Include="..\..\..\include\constraints2\typedef.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>constraints2</ProjectName>

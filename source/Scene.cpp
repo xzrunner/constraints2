@@ -1,4 +1,5 @@
 #include "constraints2/Scene.h"
+#include "constraints2/Constraint.h"
 
 #include <geoshape/Point2D.h>
 #include <geoshape/Line2D.h>
@@ -43,6 +44,75 @@ int Scene::Solve()
     }
 
     return ret;
+}
+
+GeoID Scene::AddGeometry(const std::shared_ptr<gs::Shape2D>& shape)
+{
+    GeoID ret = -1;
+    switch (shape->GetType())
+    {
+    case gs::ShapeType2D::Point:
+        ret = AddPoint(std::static_pointer_cast<gs::Point2D>(shape));
+        break;
+    case gs::ShapeType2D::Line:
+        ret = AddLine(std::static_pointer_cast<gs::Line2D>(shape));
+        break;
+    }
+    return ret;
+}
+
+ConsID Scene::AddConstraint(const std::shared_ptr<Constraint>& cons)
+{
+    ConsID ret = -1;
+    switch (cons->GetType())
+    {
+    case ConstraintType::Distance:
+        ret = AddDistanceConstraint(cons->GetGeo0(), cons->GetValuePtr());
+        break;
+    }
+    return ret;
+}
+
+void Scene::ResetSolver()
+{
+    //m_gcs_sys->initSolution(GCS::Algorithm(GCS::DogLeg));
+    /////////////////////
+
+
+    //m_gcs_sys->clearByTag(-1);
+    m_gcs_sys->declareUnknowns(m_parameters);
+    //m_gcs_sys->declareDrivenParams(DrivenParameters);
+    m_gcs_sys->initSolution(m_data->defaultSolverRedundant);
+    //m_gcs_sys->getConflicting(Conflicting);
+    //m_gcs_sys->getRedundant(Redundant);
+    //m_gcs_sys->getDependentParams(pconstraintplistOut);
+
+    //calculateDependentParametersElements();
+
+    //m_gcs_sys->dofsNumber();
+}
+
+void Scene::Clear()
+{
+    for (auto& p : m_parameters) {
+        delete p;
+    }
+    m_parameters.clear();
+
+    m_data->points.clear();
+    m_data->lines.clear();
+
+    ClearConstraints();
+
+    m_geoms.clear();
+}
+
+void Scene::ClearConstraints()
+{
+    for (int i = 0; i < m_constraints_counter; ++i) {
+        m_gcs_sys->clearByTag(i + 1);
+    }
+    m_constraints_counter = 0;
 }
 
 GeoID Scene::AddPoint(const std::shared_ptr<gs::Point2D>& pt)
@@ -124,9 +194,11 @@ ConsID Scene::AddDistanceConstraint(GeoID geo1, PointPos pos1, GeoID geo2, Point
 
 ConsID Scene::AddDistanceConstraint(GeoID line, double* value)
 {
-    assert(line < m_geoms.size());
-    assert(m_geoms[line].shape->GetType() == gs::ShapeType2D::Line);
-    return AddDistanceConstraint(line, PointPos::Start, line, PointPos::End, value);
+    if (line >= m_geoms.size() || m_geoms[line].shape->GetType() != gs::ShapeType2D::Line) {
+        return -1;
+    } else {
+        return AddDistanceConstraint(line, PointPos::Start, line, PointPos::End, value);
+    }
 }
 
 ConsID Scene::AddVerticalConstraint(GeoID geo1, PointPos pos1, GeoID geo2, PointPos pos2)
@@ -171,25 +243,6 @@ ConsID Scene::AddHorizontalConstraint(GeoID line)
     assert(line < m_geoms.size());
     assert(m_geoms[line].shape->GetType() == gs::ShapeType2D::Line);
     return AddHorizontalConstraint(line, PointPos::Start, line, PointPos::End);
-}
-
-void Scene::ResetSolver()
-{
-    //m_gcs_sys->initSolution(GCS::Algorithm(GCS::DogLeg));
-    /////////////////////
-
-
-    //m_gcs_sys->clearByTag(-1);
-    m_gcs_sys->declareUnknowns(m_parameters);
-    //m_gcs_sys->declareDrivenParams(DrivenParameters);
-    m_gcs_sys->initSolution(m_data->defaultSolverRedundant);
-    //m_gcs_sys->getConflicting(Conflicting);
-    //m_gcs_sys->getRedundant(Redundant);
-    //m_gcs_sys->getDependentParams(pconstraintplistOut);
-
-    //calculateDependentParametersElements();
-
-    //m_gcs_sys->dofsNumber();
 }
 
 void Scene::BeforeSolve()
@@ -237,29 +290,6 @@ void Scene::AfterSolve()
             dst->SetEnd(sm::vec2(static_cast<float>(*src.p2.x), static_cast<float>(*src.p2.y)));
         }
     }
-}
-
-void Scene::Clear()
-{
-    for (auto& p : m_parameters) {
-        delete p;
-    }
-    m_parameters.clear();
-
-    m_data->points.clear();
-    m_data->lines.clear();
-
-    m_constraints_counter = 0;
-
-    m_geoms.clear();
-}
-
-void Scene::ClearConstraints()
-{
-    for (int i = 0; i < m_constraints_counter; ++i) {
-        m_gcs_sys->clearByTag(i + 1);
-    }
-    m_constraints_counter = 0;
 }
 
 }

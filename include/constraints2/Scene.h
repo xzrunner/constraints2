@@ -1,5 +1,7 @@
 #pragma once
 
+#include "constraints2/typedef.h"
+
 #include <vector>
 #include <memory>
 
@@ -12,9 +14,7 @@ namespace ct2
 {
 
 class SceneData;
-
-using GeoID = int;
-using ConsID = int;
+class Constraint;
 
 class Scene
 {
@@ -33,6 +33,15 @@ public:
 
     int Solve();
 
+    GeoID AddGeometry(const std::shared_ptr<gs::Shape2D>& shape);
+    ConsID AddConstraint(const std::shared_ptr<Constraint>& cons);
+
+    void ResetSolver();
+
+    void Clear();
+    void ClearConstraints();
+
+private:
     GeoID AddPoint(const std::shared_ptr<gs::Point2D>& pt);
     GeoID AddLine(const std::shared_ptr<gs::Line2D>& line);
 
@@ -48,11 +57,6 @@ public:
     ConsID AddHorizontalConstraint(GeoID geo1, PointPos pos1,
         GeoID geo2, PointPos pos2);
     ConsID AddHorizontalConstraint(GeoID line);
-
-    void ResetSolver();
-
-    void Clear();
-    void ClearConstraints();
 
 private:
     struct Geometry
